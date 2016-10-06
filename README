@@ -1,0 +1,9 @@
+This is the README file for the EseTools package.
+
+This software comes with ABSOLUTELY NO WARRANTY.  See the file 'COPYING' for
+details.
+
+See the file 'INSTALL' for instructions on building EseTools from source.
+
+EseTools is a set of small programs for generating and receiving ESE-compatible
+timecode.
