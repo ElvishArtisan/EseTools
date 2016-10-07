@@ -9,3 +9,5 @@
 	* Implemented a 'make rpm' target.
 2016-10-07 Fred Gleason <fredg@paravelsystems.com>
 	* Added a service control file in 'esegend.service.in'.
+2016-10-07 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.5.0.
