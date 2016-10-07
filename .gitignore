@@ -1,5 +1,9 @@
 *~
 *.o
+*.rpm
+*.service
+*.spec
+*.tar.gz
 .deps
 aclocal.m4
 autom4te.cache
@@ -12,7 +16,7 @@ Makefile
 Makefile.in
 missing
 moc_*
-src/esegen/.deps/
-src/esegen/cmdswitch.cpp
-src/esegen/cmdswitch.h
-src/esegen/esegen
+src/esegend/.deps/
+src/esegend/cmdswitch.cpp
+src/esegend/cmdswitch.h
+src/esegend/esegen
