@@ -14,3 +14,5 @@
 2016-10-07 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/esegend/esegend.cpp' that caused time values
 	to be advanced non-monotonically.
+2016-10-07 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.5.1.
