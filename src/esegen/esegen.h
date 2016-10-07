@@ -49,6 +49,7 @@ class MainObject : public QObject
   void MakeZero(int32_t *buffer,unsigned *ptr);
   QDateTime NextTick(const QDateTime &dt) const;
   bool StartSound(QString *err_msg,const QString &dev);
+  void Log(const QString &msg);
   snd_pcm_t *ese_pcm;
   unsigned ese_format;
   unsigned ese_samplerate;
@@ -57,6 +58,7 @@ class MainObject : public QObject
   snd_pcm_uframes_t ese_buffer_size; 
   void *ese_pcm_buffer;
   pthread_t ese_pthread;
+  bool ese_debug;
   friend void *AlsaCallback(void *ptr);
 };
 

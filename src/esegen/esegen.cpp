@@ -40,11 +40,23 @@ void *AlsaCallback(void *ptr)
 MainObject::MainObject(QObject *parent)
   : QObject(parent)
 {
+  ese_debug=false;
   QString err_msg;
   QDateTime now=QDateTime::currentDateTime();
   struct pollfd fds;
 
-  new CmdSwitch(qApp->argc(),qApp->argv(),"esegen",ESEGEN_USAGE);
+  CmdSwitch *cmd=new CmdSwitch(qApp->argc(),qApp->argv(),"esegen",ESEGEN_USAGE);
+  for(unsigned i=0;i<cmd->keys();i++) {
+    if(cmd->key(i)=="-d") {
+      ese_debug=true;
+      cmd->setProcessed(i,true);
+    }
+    if(!cmd->processed(i)) {
+      fprintf(stderr,"esegen: unknown option \"%s\"\n",
+	      (const char *)cmd->key(i).toUtf8());
+      exit(256);
+    }
+  }
 
   if(!StartSound(&err_msg,"hw:0")) {
     fprintf(stderr,"esegen: %s\n",(const char *)err_msg.toUtf8());
@@ -175,11 +187,13 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   if(snd_pcm_hw_params_set_format(ese_pcm,hwparams,
 				  SND_PCM_FORMAT_S32_LE)==0) {
     ese_format=SND_PCM_FORMAT_S32_LE;
+    Log("using S32_LE format");
   }
   else {
     if(snd_pcm_hw_params_set_format(ese_pcm,hwparams,
 				    SND_PCM_FORMAT_S16_LE)==0) {
       ese_format=SND_PCM_FORMAT_S16_LE;
+      Log("using S16_LE format");
     }
     else {
       *err_msg=tr("incompatible sample format");
@@ -192,12 +206,14 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   //
   ese_samplerate=192000;
   snd_pcm_hw_params_set_rate_near(ese_pcm,hwparams,&ese_samplerate,&dir);
+  Log(QString().sprintf("using %u samples/sec",ese_samplerate));
 
   //
   // Channels
   //
   ese_channels=1;
   snd_pcm_hw_params_set_channels_near(ese_pcm,hwparams,&ese_channels);
+  Log(QString().sprintf("using %u channels",ese_channels));
 
   //
   // Buffer Parameters
@@ -206,9 +222,11 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   ese_period_quantity=4;
   snd_pcm_hw_params_set_periods_near(ese_pcm,hwparams,&ese_period_quantity,
 				     &dir);
+  Log(QString().sprintf("using %u periods",ese_period_quantity));
   //  ese_buffer_size=ese_samplerate/2;
   ese_buffer_size=ese_samplerate*0.0334;
   snd_pcm_hw_params_set_buffer_size_near(ese_pcm,hwparams,&ese_buffer_size);
+  Log(QString().sprintf("using %lu byte buffer",ese_buffer_size));
 
   //
   // Fire It Up
@@ -253,35 +271,14 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   return true;
 }
 
-/*
-void MainObject::MakeSquarewave(void *buffer,unsigned len) const
+
+void MainObject::Log(const QString &msg)
 {
-  int16_t sign16=1;
-  int32_t sign32=1;
-
-  printf("BUFFER IN: %p\n",(int32_t *)buffer);
-
-  switch(ese_format) {
-  case SND_PCM_FORMAT_S16_LE:
-    for(unsigned i=0;i<len;i+=33) {
-      for(unsigned j=0;j<33;j++) {
-	((int16_t *)buffer)[i+j]=sign16*0xFFFF;
-      }
-      sign16=-sign16;
-    }
-    break;
-
-  case SND_PCM_FORMAT_S32_LE:
-    for(unsigned i=0;i<len;i+=3) {
-      for(unsigned j=0;j<3;j++) {
-	((int16_t *)buffer)[i+j]=sign32*1000000000;
-      }
-      sign32=-sign32;
-    }
-    break;
+  if(ese_debug) {
+    fprintf(stderr,"%s\n",(const char *)msg.toUtf8());
   }
 }
-*/
+
 
 int main(int argc,char *argv[])
 {
