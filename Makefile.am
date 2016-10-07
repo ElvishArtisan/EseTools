@@ -27,6 +27,13 @@
 ##SUBDIRS = $(DOCBOOK_AM_OPT) src
 SUBDIRS = src
 
+install-exec-local:	
+	mkdir -p $(DESTDIR)/usr/lib/systemd/system
+	cp esegend.service $(DESTDIR)/usr/lib/systemd/system/esegend.service
+
+uninstall-local:	
+	rm -f $(DESTDIR)/usr/lib/systemd/system/esegend.service
+
 rpm:	dist
 	cp esetools-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
 	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux esetools.spec
@@ -40,7 +47,8 @@ EXTRA_DIST = autogen.sh\
              get_distro.sh\
              get_target.sh\
              link_common.sh\
-             PACKAGE_VERSION
+             PACKAGE_VERSION\
+             esegend.service.in
 
 CLEANFILES = *~\
              *.deb\
@@ -50,7 +58,8 @@ CLEANFILES = *~\
              *.tgz\
              *.zip
 
-DISTCLEANFILES = *.spec\
+DISTCLEANFILES = *.service\
+                 *.spec\
                  config.guess\
                  config.sub\
                  ltmain.sh

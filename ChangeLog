@@ -7,3 +7,5 @@
 2016-10-07 Fred Gleason <fredg@paravelsystems.com>
 	* Renamed esegen(1) to esegend(8).
 	* Implemented a 'make rpm' target.
+2016-10-07 Fred Gleason <fredg@paravelsystems.com>
+	* Added a service control file in 'esegend.service.in'.

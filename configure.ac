@@ -90,6 +90,7 @@ AC_CONFIG_FILES([ \
     src/Makefile \
     src/common/Makefile \
     src/esegend/Makefile \
+    esegend.service \
     esetools.spec \
     Makefile ])
 AC_OUTPUT()

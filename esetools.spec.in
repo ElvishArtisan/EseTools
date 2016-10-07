@@ -53,6 +53,11 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 
 %post
+systemctl daemon-reload
+
+
+%postun
+systemctl daemon-reload
 
 
 %clean
@@ -62,6 +67,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %{_sbindir}/esegend
+/usr/lib/systemd/system/esegend.service
 %doc AUTHORS
 %doc ChangeLog
 %doc COPYING 
