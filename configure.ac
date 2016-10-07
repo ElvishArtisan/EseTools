@@ -87,6 +87,7 @@ else
 fi 
 
 AC_CONFIG_FILES([ \
+    conf/Makefile \
     src/Makefile \
     src/common/Makefile \
     src/esegend/Makefile \

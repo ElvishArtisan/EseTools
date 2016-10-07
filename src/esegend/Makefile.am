@@ -30,10 +30,11 @@ moc_%.cpp:	%.h
 
 sbin_PROGRAMS = esegend
 
-dist_esegend_SOURCES = esegend.cpp esegend.h
+dist_esegend_SOURCES = config.cpp config.h\
+                       esegend.cpp esegend.h
 
 nodist_esegend_SOURCES = cmdswitch.cpp cmdswitch.h\
-                        moc_esegend.cpp
+                         moc_esegend.cpp
 
 esegend_LDADD = @QT4CLI_LIBS@ @ALSA_LIBS@ -lpthread
 

@@ -42,7 +42,7 @@ MainObject::MainObject(QObject *parent)
 {
   ese_debug=false;
   QString err_msg;
-  QDateTime now=QDateTime::currentDateTime();
+  QDateTime now;
   struct pollfd fds;
 
   CmdSwitch *cmd=
@@ -59,13 +59,23 @@ MainObject::MainObject(QObject *parent)
     }
   }
 
-  if(!StartSound(&err_msg,"hw:0")) {
+  //
+  // Load Configuration
+  //
+  ese_config=new Config();
+  ese_config->load();
+
+  //
+  // Start PCM Interface
+  //
+  if(!StartSound(&err_msg,ese_config->alsaDevice())) {
     fprintf(stderr,"esegend: %s\n",(const char *)err_msg.toUtf8());
     exit(256);
   }
 
   memset(&fds,0,sizeof(fds));
   while(1==1) {
+    now=QDateTime::currentDateTime();
     poll(&fds,0,now.msecsTo(NextTick(now)));
     WritePacket(QDateTime::currentDateTime());
   }
@@ -77,6 +87,7 @@ void MainObject::WritePacket(const QDateTime &dt)
   memset(ese_pcm_buffer,0,ese_buffer_size*sizeof(int32_t));
   char str[256];
 
+  printf("tick: %s\n",(const char *)dt.toString("hh:mm:ss").toUtf8());
   //
   // Time Part
   //

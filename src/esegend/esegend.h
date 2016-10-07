@@ -29,6 +29,8 @@
 #include <QDateTime>
 #include <QObject>
 
+#include "config.h"
+
 #define ESE_PACKET_LENGTH 0.0338
 #define ESE_SLOT_LENGTH 0.000416
 #define ESE_ON_LEVEL 2147483647
@@ -59,6 +61,7 @@ class MainObject : public QObject
   void *ese_pcm_buffer;
   pthread_t ese_pthread;
   bool ese_debug;
+  Config *ese_config;
   friend void *AlsaCallback(void *ptr);
 };
 

@@ -25,7 +25,8 @@
 ##endif
 
 ##SUBDIRS = $(DOCBOOK_AM_OPT) src
-SUBDIRS = src
+SUBDIRS = conf\
+          src
 
 install-exec-local:	
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system
