@@ -28,14 +28,14 @@ moc_%.cpp:	%.h
 	@MOC@ $< -o $@
 
 
-bin_PROGRAMS = esegen
+sbin_PROGRAMS = esegend
 
-dist_esegen_SOURCES = esegen.cpp esegen.h
+dist_esegend_SOURCES = esegend.cpp esegend.h
 
-nodist_esegen_SOURCES = cmdswitch.cpp cmdswitch.h\
-                        moc_esegen.cpp
+nodist_esegend_SOURCES = cmdswitch.cpp cmdswitch.h\
+                        moc_esegend.cpp
 
-esegen_LDADD = @QT4CLI_LIBS@ @ALSA_LIBS@ -lpthread
+esegend_LDADD = @QT4CLI_LIBS@ @ALSA_LIBS@ -lpthread
 
 CLEANFILES = *~\
              moc_*\

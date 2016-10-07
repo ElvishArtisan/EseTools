@@ -1,6 +1,6 @@
-// esegen.cpp
+// esegend.cpp
 //
-// esegen(1) Timecode Generator
+// esegend(8) Timecode Generator
 //
 //   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -23,7 +23,7 @@
 #include <QCoreApplication>
 
 #include "cmdswitch.h"
-#include "esegen.h"
+#include "esegend.h"
 
 void *AlsaCallback(void *ptr)
 {
@@ -45,21 +45,22 @@ MainObject::MainObject(QObject *parent)
   QDateTime now=QDateTime::currentDateTime();
   struct pollfd fds;
 
-  CmdSwitch *cmd=new CmdSwitch(qApp->argc(),qApp->argv(),"esegen",ESEGEN_USAGE);
+  CmdSwitch *cmd=
+    new CmdSwitch(qApp->argc(),qApp->argv(),"esegend",ESEGEND_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="-d") {
       ese_debug=true;
       cmd->setProcessed(i,true);
     }
     if(!cmd->processed(i)) {
-      fprintf(stderr,"esegen: unknown option \"%s\"\n",
+      fprintf(stderr,"esegend: unknown option \"%s\"\n",
 	      (const char *)cmd->key(i).toUtf8());
       exit(256);
     }
   }
 
   if(!StartSound(&err_msg,"hw:0")) {
-    fprintf(stderr,"esegen: %s\n",(const char *)err_msg.toUtf8());
+    fprintf(stderr,"esegend: %s\n",(const char *)err_msg.toUtf8());
     exit(256);
   }
 

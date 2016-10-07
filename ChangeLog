@@ -4,3 +4,6 @@
 	* Got TC90 generation working in 'src/esegen.cpp' and 'src/esegen.h'.
 2016-10-07 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented a '-d' switch in esegen(8).
+2016-10-07 Fred Gleason <fredg@paravelsystems.com>
+	* Renamed esegen(1) to esegend(8).
+	* Implemented a 'make rpm' target.

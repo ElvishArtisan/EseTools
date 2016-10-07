@@ -29,13 +29,14 @@ SUBDIRS = src
 
 rpm:	dist
 	cp esetools-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
-	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux glassnet.spec
-	mv $(HOME)/rpmbuild/RPMS/$(ARCH)/glassnet-*.rpm $(top_srcdir)/
-	mv $(HOME)/rpmbuild/SRPMS/glassnet-*.src.rpm $(top_srcdir)/
-	rm $(HOME)/rpmbuild/SOURCES/glassnet-$(VERSION).tar.gz
-	rm -rf $(HOME)/rpmbuild/BUILD/glassnet-$(VERSION)
+	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux esetools.spec
+	mv $(HOME)/rpmbuild/RPMS/$(ARCH)/esetools-*.rpm $(top_srcdir)/
+	mv $(HOME)/rpmbuild/SRPMS/esetools-*.src.rpm $(top_srcdir)/
+	rm $(HOME)/rpmbuild/SOURCES/esetools-$(VERSION).tar.gz
+	rm -rf $(HOME)/rpmbuild/BUILD/esetools-$(VERSION)
 
 EXTRA_DIST = autogen.sh\
+             esetools.spec.in\
              get_distro.sh\
              get_target.sh\
              link_common.sh\

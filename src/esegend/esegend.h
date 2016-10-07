@@ -1,6 +1,6 @@
-// esegen.h
+// esegend.h
 //
-// esegen(1) Timecode Generator
+// esegend(8) Timecode Generator
 //
 //   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,8 +18,8 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef ESEGEN_H
-#define ESEGEN_H
+#ifndef ESEGEND_H
+#define ESEGEND_H
 
 #include <stdint.h>
 
@@ -33,7 +33,7 @@
 #define ESE_SLOT_LENGTH 0.000416
 #define ESE_ON_LEVEL 2147483647
 #define ESE_OFF_LEVEL 0
-#define ESEGEN_USAGE "\n"
+#define ESEGEND_USAGE "\n"
 
 class MainObject : public QObject
 {
@@ -63,4 +63,4 @@ class MainObject : public QObject
 };
 
 
-#endif  // ESEGEN_H
+#endif  // ESEGEND_H

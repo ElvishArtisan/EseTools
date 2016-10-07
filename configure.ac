@@ -89,14 +89,15 @@ fi
 AC_CONFIG_FILES([ \
     src/Makefile \
     src/common/Makefile \
-    src/esegen/Makefile \
+    src/esegend/Makefile \
+    esetools.spec \
     Makefile ])
 AC_OUTPUT()
 
 #
 # Link Common Elements
 #
-./link_common.sh esegen
+./link_common.sh esegend
 
 AC_MSG_NOTICE()
 AC_MSG_NOTICE(Now enter 'make' to build the software.)

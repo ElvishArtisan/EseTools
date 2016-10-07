@@ -1,0 +1,74 @@
+## esetools.spec.in
+##
+##    Tools for generating and receiving ESE-compatible timecode
+##
+##    Copyright (C) 2016  Fred Gleason <fredg@paravelsystems.com>
+##
+##    This program is free software; you can redistribute it and/or modify
+##    it under the terms of version 2 of the GNU General Public License as
+##    published by the Free Software Foundation;
+##
+##    This program is distributed in the hope that it will be useful,
+##    but WITHOUT ANY WARRANTY; without even the implied warranty of
+##    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##    GNU General Public License for more details.
+##
+##    You should have received a copy of the GNU General Public License
+##    along with this program; if not, write to the Free Software
+##    Foundation, Inc., 59 Temple Place, Suite 330, 
+##    Boston, MA  02111-1307  USA
+##
+
+Summary: Tools for working with ESE-compatible timecode
+Name: esetools
+Version: @VERSION@
+Release: @RPM_RELEASE@%{?dist}
+License: GPLv2
+Packager: Fred Gleason <fredg@paravelsystems.com>
+Group: Productivity/Multimedia/Other
+Source: %{name}-@VERSION@.tar.gz
+BuildRequires: qt-devel alsa-lib-devel
+BuildRoot: /var/tmp/%{name}-@VERSION@
+
+%description
+ESETools is a package for working with ESE-compatible timecode, such as is
+commonly found in radio and television broadcast facilities. It includes
+esegend(8), a program for generating timecode from the local systems clock.
+
+
+%prep
+
+
+%setup
+
+
+%build
+%configure
+make
+
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
+
+
+%post
+
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+
+%files
+%defattr(-,root,root)
+%{_sbindir}/esegend
+%doc AUTHORS
+%doc ChangeLog
+%doc COPYING 
+%doc NEWS 
+%doc README 
+
+
+%changelog
+* Fri Oct  7 2016 Fred Gleason <fredg@paravelsystems.com>
+-- Initial RPM creation.
