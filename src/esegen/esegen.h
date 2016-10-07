@@ -21,14 +21,43 @@
 #ifndef ESEGEN_H
 #define ESEGEN_H
 
-#include <QCoreApplication>
+#include <stdint.h>
+
+#include <alsa/asoundlib.h>
+#include <pthread.h>
+
+#include <QDateTime>
 #include <QObject>
+
+#define ESE_PACKET_LENGTH 0.0338
+#define ESE_SLOT_LENGTH 0.000416
+#define ESE_ON_LEVEL 2147483647
+#define ESE_OFF_LEVEL 0
+#define ESEGEN_USAGE "\n"
 
 class MainObject : public QObject
 {
  Q_OBJECT;
  public:
   MainObject(QObject *parent=0);
+
+ private:
+  void WritePacket(const QDateTime &dt);
+  void MakeSync(bool is_date,int32_t *buffer,unsigned *ptr);
+  void MakeDigit(int digit,int32_t *buffer,unsigned *ptr);
+  void MakeOne(int32_t *buffer,unsigned *ptr);
+  void MakeZero(int32_t *buffer,unsigned *ptr);
+  QDateTime NextTick(const QDateTime &dt) const;
+  bool StartSound(QString *err_msg,const QString &dev);
+  snd_pcm_t *ese_pcm;
+  unsigned ese_format;
+  unsigned ese_samplerate;
+  unsigned ese_channels;
+  unsigned ese_period_quantity;
+  snd_pcm_uframes_t ese_buffer_size; 
+  void *ese_pcm_buffer;
+  pthread_t ese_pthread;
+  friend void *AlsaCallback(void *ptr);
 };
 
 

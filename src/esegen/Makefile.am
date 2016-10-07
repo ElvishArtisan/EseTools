@@ -35,7 +35,7 @@ dist_esegen_SOURCES = esegen.cpp esegen.h
 nodist_esegen_SOURCES = cmdswitch.cpp cmdswitch.h\
                         moc_esegen.cpp
 
-esegen_LDADD = @QT4CLI_LIBS@ @ALSA_LIBS@
+esegen_LDADD = @QT4CLI_LIBS@ @ALSA_LIBS@ -lpthread
 
 CLEANFILES = *~\
              moc_*\
