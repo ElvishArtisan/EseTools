@@ -271,11 +271,12 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   //
   // Buffer Parameters
   //
-  ese_period_quantity=4;
+  ese_period_quantity=3;
   snd_pcm_hw_params_set_periods_near(ese_pcm,hwparams,&ese_period_quantity,
 				     &dir);
   Log(QString().sprintf("using %u periods",ese_period_quantity));
   ese_buffer_size=ese_samplerate*0.0334;
+  Log(QString().sprintf("request %lu frame buffer",ese_buffer_size));
   snd_pcm_hw_params_set_buffer_size_near(ese_pcm,hwparams,&ese_buffer_size);
   Log(QString().sprintf("using %lu frame buffer",ese_buffer_size));
 
@@ -290,10 +291,12 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   switch(ese_format) {
   case SND_PCM_FORMAT_S32_LE:
     ese_pcm_buffer=new int32_t[ese_buffer_size*ese_channels];
+    memset(ese_pcm_buffer,0,sizeof(int32_t)*ese_buffer_size*ese_channels);
     break;
 
   case SND_PCM_FORMAT_S16_LE:
     ese_pcm_buffer=new int16_t[ese_buffer_size*ese_channels];
+    memset(ese_pcm_buffer,0,sizeof(int16_t)*ese_buffer_size*ese_channels);
     break;
 
   default:
