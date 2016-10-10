@@ -33,9 +33,11 @@
 
 #define ESE_PACKET_LENGTH 0.0338
 #define ESE_SLOT_LENGTH 0.000416
-#define ESE_ON_LEVEL 2147483647
-#define ESE_OFF_LEVEL 0
-#define ESEGEND_USAGE "\n"
+#define ESE_16BIT_ON_LEVEL 32767
+#define ESE_16BIT_OFF_LEVEL 0
+#define ESE_32BIT_ON_LEVEL 2147483647
+#define ESE_32BIT_OFF_LEVEL 0
+#define ESEGEND_USAGE "[-d]\n"
 
 class MainObject : public QObject
 {
@@ -45,10 +47,10 @@ class MainObject : public QObject
 
  private:
   void WritePacket(const QDateTime &dt);
-  void MakeSync(bool is_date,int32_t *buffer,unsigned *ptr);
-  void MakeDigit(int digit,int32_t *buffer,unsigned *ptr);
-  void MakeOne(int32_t *buffer,unsigned *ptr);
-  void MakeZero(int32_t *buffer,unsigned *ptr);
+  void MakeSync(bool is_date,unsigned *ptr);
+  void MakeDigit(int digit,unsigned *ptr);
+  void MakeOne(unsigned *ptr);
+  void MakeZero(unsigned *ptr);
   QDateTime NextTick(const QDateTime &dt) const;
   bool StartSound(QString *err_msg,const QString &dev);
   void Log(const QString &msg);

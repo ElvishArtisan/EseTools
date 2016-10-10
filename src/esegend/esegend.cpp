@@ -84,18 +84,35 @@ MainObject::MainObject(QObject *parent)
 
 void MainObject::WritePacket(const QDateTime &dt)
 {
-  memset(ese_pcm_buffer,0,ese_buffer_size*sizeof(int32_t));
+  //  memset(ese_pcm_buffer,0,ese_buffer_size*sizeof(int32_t));
   char str[256];
 
-  printf("tick: %s\n",(const char *)dt.toString("hh:mm:ss").toUtf8());
+  //
+  // Zero Packet
+  //
+  switch(ese_format) {
+  case SND_PCM_FORMAT_S32_LE:
+    for(unsigned i=0;i<(ese_buffer_size*ese_channels);i++) {
+      ((int32_t *)ese_pcm_buffer)[i]=ESE_32BIT_OFF_LEVEL;
+    }
+    break;
+
+  case SND_PCM_FORMAT_S16_LE:
+    for(unsigned i=0;i<(ese_buffer_size*ese_channels);i++) {
+      ((int16_t *)ese_pcm_buffer)[i]=ESE_16BIT_OFF_LEVEL;
+    }
+    break;
+  }  
+
+  //  printf("tick: %s\n",(const char *)dt.toString("hh:mm:ss").toUtf8());
   //
   // Time Part
   //
   unsigned ptr=0;
   snprintf(str,256,"%s",(const char *)dt.toString("hhmmss ap").toUtf8());
-  MakeSync(false,(int32_t *)ese_pcm_buffer,&ptr);
+  MakeSync(false,&ptr);
   for(int i=0;i<6;i++) {
-    MakeDigit((0xff&str[i])-'0',(int32_t *)ese_pcm_buffer,&ptr);
+    MakeDigit((0xff&str[i])-'0',&ptr);
   }
 
   //
@@ -103,56 +120,80 @@ void MainObject::WritePacket(const QDateTime &dt)
   //
   ptr=ese_samplerate*ese_channels*ESE_PACKET_LENGTH/2.0;
   snprintf(str,256,"%s",(const char *)dt.toString("MMddyy").toUtf8());
-  MakeSync(true,(int32_t *)ese_pcm_buffer,&ptr);
+  MakeSync(true,&ptr);
   for(int i=0;i<6;i++) {
-    MakeDigit((0xff&str[i])-'0',(int32_t *)ese_pcm_buffer,&ptr);
+    MakeDigit((0xff&str[i])-'0',&ptr);
   }
 }
 
 
-void MainObject::MakeSync(bool is_date,int32_t *buffer,unsigned *ptr)
+void MainObject::MakeSync(bool is_date,unsigned *ptr)
 {
   for(int i=0;i<2;i++) {
     if(is_date) {
-      MakeOne(buffer,ptr);
+      MakeOne(ptr);
     }
     else {
-      MakeZero(buffer,ptr);
+      MakeZero(ptr);
     }
   }
 }
 
 
-void MainObject::MakeDigit(int digit,int32_t *buffer,unsigned *ptr)
+void MainObject::MakeDigit(int digit,unsigned *ptr)
 {
   for(int i=0;i<4;i++) {
     if((digit&(1<<(3-i)))!=0) {
-      MakeOne(buffer,ptr);
+      MakeOne(ptr);
     }
     else {
-      MakeZero(buffer,ptr);
+      MakeZero(ptr);
     }
   }
 }
 
 
-void MainObject::MakeOne(int32_t *buffer,unsigned *ptr)
+void MainObject::MakeOne(unsigned *ptr)
 {
-  for(unsigned i=0;i<((float)ese_samplerate*ESE_SLOT_LENGTH/2.0);i++) {
-    for(unsigned j=0;j<ese_channels;j++) {
-      buffer[*ptr+i*ese_channels+j]=ESE_ON_LEVEL;
+  switch(ese_format) {
+  case SND_PCM_FORMAT_S32_LE:
+    for(unsigned i=0;i<((float)ese_samplerate*ESE_SLOT_LENGTH/2.0);i++) {
+      for(unsigned j=0;j<ese_channels;j++) {
+	((int32_t *)ese_pcm_buffer)[*ptr+i*ese_channels+j]=ESE_32BIT_ON_LEVEL;
+      }
     }
+    break;
+
+  case SND_PCM_FORMAT_S16_LE:
+    for(unsigned i=0;i<((float)ese_samplerate*ESE_SLOT_LENGTH/2.0);i++) {
+      for(unsigned j=0;j<ese_channels;j++) {
+	((int16_t *)ese_pcm_buffer)[*ptr+i*ese_channels+j]=ESE_16BIT_ON_LEVEL;
+      }
+    }
+    break;
   }
   *ptr+=ESE_SLOT_LENGTH*ese_channels*ese_samplerate;
 }
 
 
-void MainObject::MakeZero(int32_t *buffer,unsigned *ptr)
+void MainObject::MakeZero(unsigned *ptr)
 {
-  for(unsigned i=0;i<((float)ese_samplerate*ESE_SLOT_LENGTH/4.0);i++) {
-    for(unsigned j=0;j<ese_channels;j++) {
-      buffer[*ptr+i*ese_channels+j]=ESE_ON_LEVEL;
+  switch(ese_format) {
+  case SND_PCM_FORMAT_S32_LE:
+    for(unsigned i=0;i<((float)ese_samplerate*ESE_SLOT_LENGTH/4.0);i++) {
+      for(unsigned j=0;j<ese_channels;j++) {
+	((int32_t *)ese_pcm_buffer)[*ptr+i*ese_channels+j]=ESE_32BIT_ON_LEVEL;
+      }
     }
+    break;
+
+  case SND_PCM_FORMAT_S16_LE:
+    for(unsigned i=0;i<((float)ese_samplerate*ESE_SLOT_LENGTH/4.0);i++) {
+      for(unsigned j=0;j<ese_channels;j++) {
+	((int16_t *)ese_pcm_buffer)[*ptr+i*ese_channels+j]=ESE_16BIT_ON_LEVEL;
+      }
+    }
+    break;
   }
   *ptr+=ESE_SLOT_LENGTH*ese_channels*ese_samplerate;
 }
@@ -197,15 +238,15 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   // Sample Format
   //
   if(snd_pcm_hw_params_set_format(ese_pcm,hwparams,
-				  SND_PCM_FORMAT_S32_LE)==0) {
-    ese_format=SND_PCM_FORMAT_S32_LE;
-    Log("using S32_LE format");
+				  SND_PCM_FORMAT_S16_LE)==0) {
+    ese_format=SND_PCM_FORMAT_S16_LE;
+    Log("using S16_LE format");
   }
   else {
     if(snd_pcm_hw_params_set_format(ese_pcm,hwparams,
-				    SND_PCM_FORMAT_S16_LE)==0) {
-      ese_format=SND_PCM_FORMAT_S16_LE;
-      Log("using S16_LE format");
+				    SND_PCM_FORMAT_S32_LE)==0) {
+      ese_format=SND_PCM_FORMAT_S32_LE;
+      Log("using S32_LE format");
     }
     else {
       *err_msg=tr("incompatible sample format");
@@ -230,15 +271,13 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   //
   // Buffer Parameters
   //
-//  ese_period_quantity=ALSA_PERIOD_QUANTITY;
   ese_period_quantity=4;
   snd_pcm_hw_params_set_periods_near(ese_pcm,hwparams,&ese_period_quantity,
 				     &dir);
   Log(QString().sprintf("using %u periods",ese_period_quantity));
-  //  ese_buffer_size=ese_samplerate/2;
   ese_buffer_size=ese_samplerate*0.0334;
   snd_pcm_hw_params_set_buffer_size_near(ese_pcm,hwparams,&ese_buffer_size);
-  Log(QString().sprintf("using %lu byte buffer",ese_buffer_size));
+  Log(QString().sprintf("using %lu frame buffer",ese_buffer_size));
 
   //
   // Fire It Up
