@@ -20,3 +20,6 @@
 	* Added support for S16_LE format in esegend(8).
 2016-10-10 Fred Gleason <fredg@paravelsystems.com>
 	* Changed the number of buffer periods from 4 to 3 in esegend(8).
+2016-10-10 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'AlsaFormat=', 'SampleRate=', 'Channels=' and
+	'PeriodQuantity=' parameters to 'esegend.conf(5).

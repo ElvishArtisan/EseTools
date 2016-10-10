@@ -84,7 +84,6 @@ MainObject::MainObject(QObject *parent)
 
 void MainObject::WritePacket(const QDateTime &dt)
 {
-  //  memset(ese_pcm_buffer,0,ese_buffer_size*sizeof(int32_t));
   char str[256];
 
   //
@@ -237,48 +236,79 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   //
   // Sample Format
   //
-  if(snd_pcm_hw_params_set_format(ese_pcm,hwparams,
-				  SND_PCM_FORMAT_S16_LE)==0) {
-    ese_format=SND_PCM_FORMAT_S16_LE;
-    Log("using S16_LE format");
-  }
-  else {
+  switch(ese_config->alsaFormat()) {
+  default:   // Autodetect
+    if(snd_pcm_hw_params_set_format(ese_pcm,hwparams,
+				    SND_PCM_FORMAT_S16_LE)==0) {
+      ese_format=SND_PCM_FORMAT_S16_LE;
+      Log("using S16_LE format");
+    }
+    else {
+      if(snd_pcm_hw_params_set_format(ese_pcm,hwparams,
+				      SND_PCM_FORMAT_S32_LE)==0) {
+	ese_format=SND_PCM_FORMAT_S32_LE;
+	Log("using S32_LE format");
+      }
+      else {
+	*err_msg=tr("incompatible sample format");
+	return false;
+      }
+    }
+    break;
+
+  case SND_PCM_FORMAT_S16_LE:
+    if(snd_pcm_hw_params_set_format(ese_pcm,hwparams,
+				    SND_PCM_FORMAT_S16_LE)==0) {
+      ese_format=SND_PCM_FORMAT_S16_LE;
+      Log("using S16_LE format");
+    }
+    else {
+      fprintf(stderr,"esegend: unsupported format S16_LE\n");
+      exit(256);
+    }
+    break;
+
+  case SND_PCM_FORMAT_S32_LE:
     if(snd_pcm_hw_params_set_format(ese_pcm,hwparams,
 				    SND_PCM_FORMAT_S32_LE)==0) {
       ese_format=SND_PCM_FORMAT_S32_LE;
       Log("using S32_LE format");
     }
     else {
-      *err_msg=tr("incompatible sample format");
-      return false;
+      fprintf(stderr,"esegend: unsupported format S32_LE\n");
+      exit(256);
     }
+    break;
   }
 
   //
   // Sample Rate
   //
-  ese_samplerate=192000;
+  ese_samplerate=ese_config->sampleRate();
   snd_pcm_hw_params_set_rate_near(ese_pcm,hwparams,&ese_samplerate,&dir);
-  Log(QString().sprintf("using %u samples/sec",ese_samplerate));
+  Log(QString().sprintf("requested %u, got %u samples/sec",
+			ese_config->sampleRate(),ese_samplerate));
 
   //
   // Channels
   //
-  ese_channels=1;
+  ese_channels=ese_config->channels();
   snd_pcm_hw_params_set_channels_near(ese_pcm,hwparams,&ese_channels);
-  Log(QString().sprintf("using %u channels",ese_channels));
+  Log(QString().sprintf("requested %u, got %u channels",
+			ese_config->channels(),ese_channels));
 
   //
   // Buffer Parameters
   //
-  ese_period_quantity=3;
+  ese_period_quantity=ese_config->periodQuantity();
   snd_pcm_hw_params_set_periods_near(ese_pcm,hwparams,&ese_period_quantity,
 				     &dir);
-  Log(QString().sprintf("using %u periods",ese_period_quantity));
+  Log(QString().sprintf("requested %u, got %u periods",
+			ese_config->periodQuantity(),ese_period_quantity));
   ese_buffer_size=ese_samplerate*0.0334;
-  Log(QString().sprintf("request %lu frame buffer",ese_buffer_size));
   snd_pcm_hw_params_set_buffer_size_near(ese_pcm,hwparams,&ese_buffer_size);
-  Log(QString().sprintf("using %lu frame buffer",ese_buffer_size));
+  Log(QString().sprintf("requested %u, got %lu frame buffer",
+			(unsigned)(ese_samplerate*0.0334),ese_buffer_size));
 
   //
   // Fire It Up

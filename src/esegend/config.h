@@ -26,6 +26,10 @@
 
 #define ESEGEND_CONF_FILE "/etc/esegend.conf"
 #define ESEGEND_DEFAULT_ALSA_DEVICE "hw:0"
+#define ESEGEND_DEFAULT_ALSA_FORMAT "AUTO"
+#define ESEGEND_DEFAULT_SAMPLE_RATE 192000
+#define ESEGEND_DEFAULT_CHANNELS 1
+#define ESEGEND_DEFAULT_PERIOD_QUANTITY 3
 
 class Config
 {
@@ -33,11 +37,23 @@ class Config
   Config();
   QString alsaDevice() const;
   void setAlsaDevice(const QString &str);
+  unsigned alsaFormat() const;
+  void setAlsaFormat(unsigned fmt);
+  unsigned sampleRate() const;
+  void setSampleRate(unsigned samprate);
+  unsigned channels() const;
+  void setChannels(unsigned chans);
+  unsigned periodQuantity() const;
+  void setPeriodQuantity(unsigned periods);
   void load();
   void save() const;
 
  private:
   QString config_alsa_device;
+  unsigned config_alsa_format;
+  unsigned config_sample_rate;
+  unsigned config_channels;
+  unsigned config_period_quantity;
 };
 
 
