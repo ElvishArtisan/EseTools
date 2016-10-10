@@ -85,6 +85,7 @@ MainObject::MainObject(QObject *parent)
 void MainObject::WritePacket(const QDateTime &dt)
 {
   char str[256];
+  QString time_format="hhmmss";
 
   //
   // Zero Packet
@@ -103,12 +104,16 @@ void MainObject::WritePacket(const QDateTime &dt)
     break;
   }  
 
+  if(ese_config->hourMode()==Config::Hour12) {
+    time_format="hhmmss ap";
+  }
+
   //  printf("tick: %s\n",(const char *)dt.toString("hh:mm:ss").toUtf8());
   //
   // Time Part
   //
   unsigned ptr=0;
-  snprintf(str,256,"%s",(const char *)dt.toString("hhmmss ap").toUtf8());
+  snprintf(str,256,"%s",(const char *)dt.toString(time_format).toUtf8());
   MakeSync(false,&ptr);
   for(int i=0;i<6;i++) {
     MakeDigit((0xff&str[i])-'0',&ptr);

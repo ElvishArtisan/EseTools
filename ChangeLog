@@ -23,3 +23,5 @@
 2016-10-10 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'AlsaFormat=', 'SampleRate=', 'Channels=' and
 	'PeriodQuantity=' parameters to 'esegend.conf(5).
+2016-10-10 Fred Gleason <fredg@paravelsystems.com>
+	* Added an 'HourMode=' parameter to esegend.conf(5).
