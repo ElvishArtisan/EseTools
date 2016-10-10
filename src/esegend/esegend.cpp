@@ -77,7 +77,7 @@ MainObject::MainObject(QObject *parent)
   while(1==1) {
     now=QDateTime::currentDateTime();
     poll(&fds,0,now.msecsTo(NextTick(now)));
-    WritePacket(QDateTime::currentDateTime());
+    WritePacket(QDateTime::currentDateTime().addMSecs(ese_config->timeOffset()));
   }
 }
 

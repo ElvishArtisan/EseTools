@@ -22,10 +22,13 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <stdint.h>
+
 #include <QString>
 
 #define ESEGEND_CONF_FILE "/etc/esegend.conf"
 #define ESEGEND_DEFAULT_HOUR_MODE Config::Hour12
+#define ESEGEND_DEFAULT_TIME_OFFSET 0
 #define ESEGEND_DEFAULT_ALSA_DEVICE "hw:0"
 #define ESEGEND_DEFAULT_ALSA_FORMAT "AUTO"
 #define ESEGEND_DEFAULT_SAMPLE_RATE 192000
@@ -39,6 +42,8 @@ class Config
   Config();
   HourMode hourMode() const;
   void setHourMode(HourMode mode);
+  int64_t timeOffset() const;
+  void setTimeOffset(int64_t msecs);
   QString alsaDevice() const;
   void setAlsaDevice(const QString &str);
   unsigned alsaFormat() const;
@@ -54,6 +59,7 @@ class Config
 
  private:
   HourMode config_hour_mode;
+  int64_t config_time_offset;
   QString config_alsa_device;
   unsigned config_alsa_format;
   unsigned config_sample_rate;

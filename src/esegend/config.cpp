@@ -42,6 +42,18 @@ void Config::setHourMode(Config::HourMode mode)
 }
 
 
+int64_t Config::timeOffset() const
+{
+  return config_time_offset;
+}
+
+
+void Config::setTimeOffset(int64_t msecs)
+{
+  config_time_offset=msecs;
+}
+
+
 QString Config::alsaDevice() const
 {
   return config_alsa_device;
@@ -109,6 +121,7 @@ void Config::load()
   config_hour_mode=
     (Config::HourMode)s.value("HourMode",(unsigned)ESEGEND_DEFAULT_HOUR_MODE).
     toUInt();
+  config_time_offset=s.value("TimeOffset",ESEGEND_DEFAULT_TIME_OFFSET).toLongLong();
   config_alsa_device=
     s.value("AlsaDevice",ESEGEND_DEFAULT_ALSA_DEVICE).toString();
   QString str=s.value("AlsaFormat",ESEGEND_DEFAULT_ALSA_FORMAT).toString();
@@ -130,6 +143,7 @@ void Config::save() const
 {
   QSettings s(ESEGEND_CONF_FILE,QSettings::IniFormat);
   s.setValue("HourMode",(unsigned)config_hour_mode);
+  s.setValue("TimeOffset",(qint64)config_time_offset);
   s.setValue("AlsaDevice",config_alsa_device);
   switch(config_alsa_format) {
   case SND_PCM_FORMAT_S16_LE:
