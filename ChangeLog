@@ -29,3 +29,5 @@
 	* Added an 'TimeOffset=' parameter to esegend.conf(5).
 2016-10-10 Fred Gleason <fredg@paravelsystems.com>
 	* Implemented support for TC89.
+2016-10-11 Fred Gleason <fredg@paravelsystems.com>
+	* Added comments to 'conf/esegend-sample.conf'.
