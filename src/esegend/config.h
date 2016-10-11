@@ -27,6 +27,7 @@
 #include <QString>
 
 #define ESEGEND_CONF_FILE "/etc/esegend.conf"
+#define ESEGEND_DEFAULT_TIMECODE_VERSION Config::Tc90
 #define ESEGEND_DEFAULT_HOUR_MODE Config::Hour12
 #define ESEGEND_DEFAULT_TIME_OFFSET 0
 #define ESEGEND_DEFAULT_ALSA_DEVICE "hw:0"
@@ -38,8 +39,11 @@
 class Config
 {
  public:
+  enum TimecodeVersion {Tc89=89,Tc90=90};
   enum HourMode {Hour12=12,Hour24=24};
   Config();
+  TimecodeVersion timecodeVersion() const;
+  void setTimecodeVersion(TimecodeVersion ver);
   HourMode hourMode() const;
   void setHourMode(HourMode mode);
   int64_t timeOffset() const;
@@ -58,6 +62,7 @@ class Config
   void save() const;
 
  private:
+  TimecodeVersion config_timecode_version;
   HourMode config_hour_mode;
   int64_t config_time_offset;
   QString config_alsa_device;

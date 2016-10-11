@@ -77,12 +77,82 @@ MainObject::MainObject(QObject *parent)
   while(1==1) {
     now=QDateTime::currentDateTime();
     poll(&fds,0,now.msecsTo(NextTick(now)));
-    WritePacket(QDateTime::currentDateTime().addMSecs(ese_config->timeOffset()));
+    switch(ese_config->timecodeVersion()) {
+    case Config::Tc90:
+      WriteTc90Packet(QDateTime::currentDateTime().
+		      addMSecs(ese_config->timeOffset()));
+      break;
+
+    case Config::Tc89:
+      WriteTc89Packet(QDateTime::currentDateTime().
+		      addMSecs(ese_config->timeOffset()));
+      break;
+
+    default:
+      fprintf(stderr,"esegend: unknown timecode version\n");
+      exit(256);
+      break;
+    }
   }
 }
 
 
-void MainObject::WritePacket(const QDateTime &dt)
+void MainObject::WriteTc89Packet(const QDateTime &dt)
+{
+  QString str;
+  unsigned hour_mode_code=0;
+
+  //
+  // Zero Packet
+  //
+  switch(ese_format) {
+  case SND_PCM_FORMAT_S32_LE:
+    for(unsigned i=0;i<(ese_buffer_size*ese_channels);i++) {
+      ((int32_t *)ese_pcm_buffer)[i]=ESE_32BIT_OFF_LEVEL;
+    }
+    break;
+
+  case SND_PCM_FORMAT_S16_LE:
+    for(unsigned i=0;i<(ese_buffer_size*ese_channels);i++) {
+      ((int16_t *)ese_pcm_buffer)[i]=ESE_16BIT_OFF_LEVEL;
+    }
+    break;
+  }  
+
+  //  printf("tick: %s\n",(const char *)dt.toString("hhmmss ap").toUtf8());
+
+  //
+  // Sync Header
+  //
+  unsigned ptr=0;
+  if(ese_config->hourMode()==Config::Hour24) {
+    hour_mode_code=0x40;
+  }
+  str=dt.toString("hhmmss ap");
+
+  //
+  // Sync Bit
+  //
+  MakeZero(&ptr);
+
+  //
+  // Hour
+  //
+  MakeHexDigit(str.left(2).toInt(NULL,16)+hour_mode_code,&ptr);
+
+  //
+  // Minute
+  //
+  MakeHexDigit(str.mid(2,2).toInt(NULL,16),&ptr);
+
+  //
+  // Second
+  //
+  MakeHexDigit(str.mid(4,2).toInt(NULL,16),&ptr);
+}
+
+
+void MainObject::WriteTc90Packet(const QDateTime &dt)
 {
   char str[256];
   QString time_format="hhmmss";
@@ -116,7 +186,7 @@ void MainObject::WritePacket(const QDateTime &dt)
   snprintf(str,256,"%s",(const char *)dt.toString(time_format).toUtf8());
   MakeSync(false,&ptr);
   for(int i=0;i<6;i++) {
-    MakeDigit((0xff&str[i])-'0',&ptr);
+    MakeBCDDigit((0xff&str[i])-'0',&ptr);
   }
 
   //
@@ -126,7 +196,7 @@ void MainObject::WritePacket(const QDateTime &dt)
   snprintf(str,256,"%s",(const char *)dt.toString("MMddyy").toUtf8());
   MakeSync(true,&ptr);
   for(int i=0;i<6;i++) {
-    MakeDigit((0xff&str[i])-'0',&ptr);
+    MakeBCDDigit((0xff&str[i])-'0',&ptr);
   }
 }
 
@@ -144,7 +214,20 @@ void MainObject::MakeSync(bool is_date,unsigned *ptr)
 }
 
 
-void MainObject::MakeDigit(int digit,unsigned *ptr)
+void MainObject::MakeHexDigit(int digit,unsigned *ptr)
+{
+  for(int i=0;i<7;i++) {
+    if((digit&(1<<(6-i)))!=0) {
+      MakeOne(ptr);
+    }
+    else {
+      MakeZero(ptr);
+    }
+  }
+}
+
+
+void MainObject::MakeBCDDigit(int digit,unsigned *ptr)
 {
   for(int i=0;i<4;i++) {
     if((digit&(1<<(3-i)))!=0) {

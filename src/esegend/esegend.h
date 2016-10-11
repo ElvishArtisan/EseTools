@@ -46,9 +46,11 @@ class MainObject : public QObject
   MainObject(QObject *parent=0);
 
  private:
-  void WritePacket(const QDateTime &dt);
+  void WriteTc89Packet(const QDateTime &dt);
+  void WriteTc90Packet(const QDateTime &dt);
   void MakeSync(bool is_date,unsigned *ptr);
-  void MakeDigit(int digit,unsigned *ptr);
+  void MakeHexDigit(int digit,unsigned *ptr);
+  void MakeBCDDigit(int digit,unsigned *ptr);
   void MakeOne(unsigned *ptr);
   void MakeZero(unsigned *ptr);
   QDateTime NextTick(const QDateTime &dt) const;

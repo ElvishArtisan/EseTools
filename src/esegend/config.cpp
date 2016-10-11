@@ -29,6 +29,17 @@ Config::Config()
 {
 }
 
+Config::TimecodeVersion Config::timecodeVersion() const
+{
+  return config_timecode_version;
+}
+
+
+void Config::setTimecodeVersion(Config::TimecodeVersion ver)
+{
+  config_timecode_version=ver;
+}
+
 
 Config::HourMode Config::hourMode() const
 {
@@ -118,6 +129,9 @@ void Config::load()
 {
   QSettings s(ESEGEND_CONF_FILE,QSettings::IniFormat);
 
+  config_timecode_version=(Config::TimecodeVersion)
+    s.value("TimecodeVersion",(unsigned)ESEGEND_DEFAULT_TIMECODE_VERSION).
+    toUInt();
   config_hour_mode=
     (Config::HourMode)s.value("HourMode",(unsigned)ESEGEND_DEFAULT_HOUR_MODE).
     toUInt();
@@ -142,6 +156,7 @@ void Config::load()
 void Config::save() const
 {
   QSettings s(ESEGEND_CONF_FILE,QSettings::IniFormat);
+  s.setValue("TimecodeVersion",(unsigned)config_timecode_version);
   s.setValue("HourMode",(unsigned)config_hour_mode);
   s.setValue("TimeOffset",(qint64)config_time_offset);
   s.setValue("AlsaDevice",config_alsa_device);
