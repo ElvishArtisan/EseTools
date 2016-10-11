@@ -31,3 +31,7 @@
 	* Implemented support for TC89.
 2016-10-11 Fred Gleason <fredg@paravelsystems.com>
 	* Added comments to 'conf/esegend-sample.conf'.
+2016-10-11 Fred Gleason <fredg@paravelsystems.com>
+	* Updated 'NEWS'.
+	* Updated 'INSTALL'.
+	* Incremented the package version to 0.6.0.

@@ -1,3 +1,7 @@
 This is the NEWS file for the EseTools package.
 
 -------------------------------------------------------------------------------
+v0.6.0 - First First Beta Release
+
+esegend(8) - The ESE Timecode Generation Daemon.  Can generate TC89 or
+TC90 timecode, using most PCM audio devices.
