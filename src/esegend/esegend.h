@@ -24,7 +24,7 @@
 #include <stdint.h>
 
 #include <alsa/asoundlib.h>
-#include <pthread.h>
+//#include <pthread.h>
 
 #include <QDateTime>
 #include <QObject>
@@ -66,7 +66,6 @@ class MainObject : public QObject
   pthread_t ese_pthread;
   bool ese_debug;
   Config *ese_config;
-  friend void *AlsaCallback(void *ptr);
 };
 
 

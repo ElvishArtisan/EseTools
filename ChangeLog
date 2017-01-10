@@ -35,3 +35,5 @@
 	* Updated 'NEWS'.
 	* Updated 'INSTALL'.
 	* Incremented the package version to 0.6.0.
+2017-01-10 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored esegend(8) to use a single thread.

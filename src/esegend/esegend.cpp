@@ -18,24 +18,10 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#include <poll.h>
-
 #include <QCoreApplication>
 
 #include "cmdswitch.h"
 #include "esegend.h"
-
-void *AlsaCallback(void *ptr)
-{
-
-  MainObject *obj=(MainObject *)ptr;
-
-  while(1==1) {
-    snd_pcm_writei(obj->ese_pcm,obj->ese_pcm_buffer,obj->ese_buffer_size);
-  }
-
-  return NULL;
-}
 
 MainObject::MainObject(QObject *parent)
   : QObject(parent)
@@ -76,7 +62,7 @@ MainObject::MainObject(QObject *parent)
   memset(&fds,0,sizeof(fds));
   while(1==1) {
     now=QDateTime::currentDateTime();
-    poll(&fds,0,now.msecsTo(NextTick(now)));
+
     switch(ese_config->timecodeVersion()) {
     case Config::Tc90:
       WriteTc90Packet(QDateTime::currentDateTime().
@@ -93,6 +79,7 @@ MainObject::MainObject(QObject *parent)
       exit(256);
       break;
     }
+    snd_pcm_writei(ese_pcm,ese_pcm_buffer,ese_buffer_size);
   }
 }
 
@@ -118,8 +105,6 @@ void MainObject::WriteTc89Packet(const QDateTime &dt)
     }
     break;
   }  
-
-  //  printf("tick: %s\n",(const char *)dt.toString("hhmmss ap").toUtf8());
 
   //
   // Sync Header
@@ -178,7 +163,6 @@ void MainObject::WriteTc90Packet(const QDateTime &dt)
     time_format="hhmmss ap";
   }
 
-  //  printf("tick: %s\n",(const char *)dt.toString("hh:mm:ss").toUtf8());
   //
   // Time Part
   //
@@ -301,7 +285,6 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   snd_pcm_sw_params_t *swparams;
   int dir;
   int aerr;
-  pthread_attr_t pthread_attr;
 
   if(snd_pcm_open(&ese_pcm,dev.toUtf8(),
 		  SND_PCM_STREAM_PLAYBACK,0)!=0) {
@@ -432,13 +415,6 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
     *err_msg=tr("ALSA device error 2")+": "+snd_strerror(aerr);
     return false;
   }
-
-  //
-  // Start the Callback
-  //
-  pthread_attr_init(&pthread_attr);
-  pthread_attr_setschedpolicy(&pthread_attr,SCHED_FIFO);
-  pthread_create(&ese_pthread,&pthread_attr,AlsaCallback,this);
 
   return true;
 }
