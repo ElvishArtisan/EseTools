@@ -79,6 +79,10 @@ MainObject::MainObject(QObject *parent)
       exit(256);
       break;
     }
+    if(snd_pcm_state(ese_pcm)!=SND_PCM_STATE_RUNNING) {
+      snd_pcm_drop(ese_pcm);
+      snd_pcm_prepare(ese_pcm);
+    }
     snd_pcm_writei(ese_pcm,ese_pcm_buffer,ese_buffer_size);
   }
 }
