@@ -4,7 +4,7 @@ dnl Autoconf configuration
 dnl
 dnl Use autoconf to process this into a configure script
 dnl
-dnl   (C) Copyright 2014-2016 Fred Gleason <fredg@paravelsystems.com>
+dnl   (C) Copyright 2014-2025 Fred Gleason <fredg@paravelsystems.com>
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License version 2 as
@@ -32,16 +32,9 @@ AC_PROG_CXX
 AC_LANG(C++)
 
 #
-# Option Switches
+# Check for Qt6 (Mandatory)
 #
-AC_ARG_ENABLE(docbook,[  --disable-docbook       disable building of DocBook documentation],[DOCBOOK_DISABLED=yes],[])
-
-#
-# Check for Qt (Mandatory)
-#
-PKG_CHECK_MODULES(QT4CLI,QtCore QtSql,[],[AC_MSG_ERROR([*** Qt4 CLI components not found ***])])
-AC_CHECK_PROG(MOC_NAME,moc-qt4,[moc-qt4],[moc])
-AC_SUBST(MOC,$MOC_NAME)
+AQ_FIND_QT6(QT6,Core Network,[],[AC_MSG_ERROR([*** Qt6 not found ***])])
 
 #
 # Check for ALSA
@@ -49,19 +42,25 @@ AC_SUBST(MOC,$MOC_NAME)
 PKG_CHECK_MODULES(ALSA,alsa,[ALSA_FOUND=y],[AC_MSG_ERROR([*** ALSA not found ***])])
 
 #
-# Check for DocBook Toolchain
-#
-if test -z $DOCBOOK_DISABLED ; then
-  USING_DOCBOOK=yes
-fi
-AM_CONDITIONAL([DOCBOOK_AM], [test "$USING_DOCBOOK" = yes])
-
-#
 # Determine the target architecture
 #
 AR_GCC_TARGET()
 AC_SUBST(VENDOR,$ar_gcc_distro)
 AC_SUBST(ARCH,$ar_gcc_arch)
+
+#
+# Determine number of available CPU cores for building packages
+#
+AX_COUNT_CPUS([],[])
+if test $CPU_COUNT -lt 2 ; then
+   AC_SUBST(CPUS_AVAIL,1)
+else
+   if test $CPU_COUNT -gt 16 ; then
+      AC_SUBST(CPUS_AVAIL,16)
+   else
+      AC_SUBST(CPUS_AVAIL,$(($CPU_COUNT-1)))
+   fi
+fi
 
 #
 # Determine Distro

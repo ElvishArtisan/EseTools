@@ -32,7 +32,7 @@ MainObject::MainObject(QObject *parent)
   struct pollfd fds;
 
   CmdSwitch *cmd=
-    new CmdSwitch(qApp->argc(),qApp->argv(),"esegend",ESEGEND_USAGE);
+    new CmdSwitch("esegend",ESEGEND_USAGE);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="-d") {
       ese_debug=true;
@@ -361,7 +361,7 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   //
   ese_samplerate=ese_config->sampleRate();
   snd_pcm_hw_params_set_rate_near(ese_pcm,hwparams,&ese_samplerate,&dir);
-  Log(QString().sprintf("requested %u, got %u samples/sec",
+  Log(QString::asprintf("requested %u, got %u samples/sec",
 			ese_config->sampleRate(),ese_samplerate));
 
   //
@@ -369,7 +369,7 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   //
   ese_channels=ese_config->channels();
   snd_pcm_hw_params_set_channels_near(ese_pcm,hwparams,&ese_channels);
-  Log(QString().sprintf("requested %u, got %u channels",
+  Log(QString::asprintf("requested %u, got %u channels",
 			ese_config->channels(),ese_channels));
 
   //
@@ -378,11 +378,11 @@ bool MainObject::StartSound(QString *err_msg,const QString &dev)
   ese_period_quantity=ese_config->periodQuantity();
   snd_pcm_hw_params_set_periods_near(ese_pcm,hwparams,&ese_period_quantity,
 				     &dir);
-  Log(QString().sprintf("requested %u, got %u periods",
+  Log(QString::asprintf("requested %u, got %u periods",
 			ese_config->periodQuantity(),ese_period_quantity));
   ese_buffer_size=ese_samplerate*0.0334;
   snd_pcm_hw_params_set_buffer_size_near(ese_pcm,hwparams,&ese_buffer_size);
-  Log(QString().sprintf("requested %u, got %lu frame buffer",
+  Log(QString::asprintf("requested %u, got %lu frame buffer",
 			(unsigned)(ese_samplerate*0.0334),ese_buffer_size));
 
   //
