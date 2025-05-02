@@ -46,3 +46,5 @@
 	* Changed the Qt dependency from Qt4 to Qt6.
 2025-05-02 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'make deb' target.
+2025-05-02 Fred Gleason <fredg@paravelsystems.com>
+	* Tweaked the installation scripts for the 'esetools' DEB package.

@@ -1,8 +1,8 @@
-## automake.am
+## makefile.am
 ##
-## Automake.am for EseTools conf/
+## Makefile.am for EseTools conf/
 ##
-##   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License as
@@ -19,6 +19,13 @@
 ##   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ##
 ## Use automake to process this into a Makefile.in
+
+install-exec-local:	
+	mkdir -p $(DESTDIR)/usr/share/esetools
+	cp esegend-sample.conf $(DESTDIR)/usr/share/esetools/
+
+uninstall-local:	
+	rm -f $(DESTDIR)/usr/share/esetools/esegend-sample.conf
 
 EXTRA_DIST = esegend-sample.conf
 
