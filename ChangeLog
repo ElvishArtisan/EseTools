@@ -48,3 +48,5 @@
 	* Added a 'make deb' target.
 2025-05-02 Fred Gleason <fredg@paravelsystems.com>
 	* Tweaked the installation scripts for the 'esetools' DEB package.
+2025-05-02 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 1.0.0rc0.
