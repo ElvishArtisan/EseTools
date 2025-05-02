@@ -1,10 +1,10 @@
 ## Makefile.am
 ##
-## Top level Makefile.am
+## systemd/ Makefile.am for EseTools
 ##
 ## Use automake to process this into a Makefile.in
 ##
-##   (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2025 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -20,29 +20,17 @@
 ##   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ##
 
-SUBDIRS = helpers\
-          conf\
-          debian\
-          src\
-          systemd
+install-exec-local:	
+	mkdir -p $(DESTDIR)/usr/lib/systemd/system
+	cp esegen.service $(DESTDIR)/usr/lib/systemd/system/esegen.service
+	./daemon-reload.sh
 
-deb:	dist
-	./build_debs.sh
+uninstall-local:	
+	rm -f $(DESTDIR)/usr/lib/systemd/system/esegen.service
+	./daemon-reload.sh
 
-rpm:	dist
-	cp esetools-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
-	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux esetools.spec
-	mv $(HOME)/rpmbuild/RPMS/$(ARCH)/esetools-*.rpm $(top_srcdir)/
-	mv $(HOME)/rpmbuild/SRPMS/esetools-*.src.rpm $(top_srcdir)/
-	rm $(HOME)/rpmbuild/SOURCES/esetools-$(VERSION).tar.gz
-	rm -rf $(HOME)/rpmbuild/BUILD/esetools-$(VERSION)
-
-EXTRA_DIST = autogen.sh\
-             build_debs.sh.in\
-             get_distro.pl\
-             get_target.sh\
-             link_common.sh\
-             PACKAGE_VERSION
+EXTRA_DIST = daemon-reload.sh\
+             esegen.service.in
 
 CLEANFILES = *~\
              *.deb\
@@ -52,23 +40,11 @@ CLEANFILES = *~\
              *.tgz\
              *.zip
 
-DISTCLEANFILES = *.service\
-                 *.spec\
-                 config.guess\
-                 config.sub\
-                 ltmain.sh
+DISTCLEANFILES = *.service
 
 MAINTAINERCLEANFILES = *~\
-                       *.buildinfo\
-                       *.changes\
-                       *.deb\
-                       *.ddeb\
-                       *.dsc\
-                       *.spec\
                        *.tar.gz\
-                       *.tar.xz\
                        aclocal.m4\
-                       compile\
                        config.guess\
                        config.status\
                        config.sub\

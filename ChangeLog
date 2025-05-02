@@ -44,3 +44,5 @@
 	* Incremented the package version to 0.7.0.
 2025-05-02 Fred Gleason <fredg@paravelsystems.com>
 	* Changed the Qt dependency from Qt4 to Qt6.
+2025-05-02 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'make deb' target.

@@ -85,15 +85,36 @@ else
   AC_SUBST(VENDOR,suse)
 fi 
 
+#
+# Generated File Warnings
+#
+AC_SUBST_FILE(GENERATED_C_FILE_WARNING)
+GENERATED_C_FILE_WARNING=$srcdir/helpers/c_file_warning
+
+AC_SUBST_FILE(GENERATED_SCRIPT_FILE_WARNING)
+GENERATED_SCRIPT_FILE_WARNING=$srcdir/helpers/script_file_warning
+
+AC_SUBST_FILE(GENERATED_XML_FILE_WARNING)
+GENERATED_XML_FILE_WARNING=$srcdir/helpers/xml_file_warning
+
+AC_SUBST_FILE(GENERATED_INI_FILE_WARNING)
+GENERATED_INI_FILE_WARNING=$srcdir/helpers/ini_file_warning
+
 AC_CONFIG_FILES([ \
     conf/Makefile \
+    debian/source/Makefile \
+    debian/Makefile \
+    helpers/Makefile \
     src/Makefile \
     src/common/Makefile \
     src/esegend/Makefile \
-    esegend.service \
+    systemd/esegen.service \
+    systemd/Makefile \
+    build_debs.sh \
     esetools.spec \
     Makefile ])
 AC_OUTPUT()
+chmod 755 build_debs.sh
 
 #
 # Link Common Elements
