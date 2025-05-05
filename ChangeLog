@@ -50,3 +50,6 @@
 	* Tweaked the installation scripts for the 'esetools' DEB package.
 2025-05-02 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 1.0.0rc0.
+2025-05-05 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'libasound2-dev' to the list of 'Required build packages'
+	list for 'Debian 12 Bookworm' in 'INSTALL'.

@@ -17,9 +17,9 @@ BUILD ENVIRONMENT
 
 DISTRO-SPECIFIC NOTES
 ---------------------
-1) Ubuntu 22.04 LTS
+1) Debian 12 "Bookworm"
 
-Required build packages: qt6-base-dev make g++ autoconf automake debhelper autoconf-archive pbuilder ubuntu-dev-tools apt-file
+Required build packages: qt6-base-dev make g++ autoconf automake debhelper autoconf-archive pbuilder ubuntu-dev-tools apt-file libasound2-dev
 
 Configure script invocation: ./configure --prefix=/usr
 
